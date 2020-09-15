@@ -147,7 +147,6 @@ def request_is_limited_gcra(key, limit, period, client=None):
         client = get_redis(True)
     t = client.time()[0]
     separation = round(period / limit)
-    print(f"Start time: {t} separation: {separation}")
     client.setnx(key, 0)
     try:
         with client.lock('lock:' + key, blocking_timeout=5):
@@ -193,4 +192,12 @@ def rate_limit(limit, period, key=None, key_prefix="", algorithm="gcra", client=
     return decorator
 
 
-# https://pypi.org/project/backoff/
+class RateLimitLogFilter(logging.Filter):
+    def __init__(self, key, limit, period, algorithm="gcra"):
+        self.key = key
+        self.limit = limit
+        self.period = period
+        self.algorithm = algorithm
+
+    def filter(self, record):
+        return not request_is_limited(self.key, self.limit, self.period, self.algorithm)
