@@ -2,7 +2,6 @@
 
 Useful helpers and tools when working with Redis or using redis for common problems like rate-limitting, locks and other...
 
-**THIS IS A PYTHON 2.7 COMPATIBLE PACKAGE, FOR PYTHON 3 USE https://pypi.org/project/redis-tools/**
 
 ## 12Factor configuration
 

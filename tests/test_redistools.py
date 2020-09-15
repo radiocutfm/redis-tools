@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import os
 import time
 import threading
 import redistools
 from unittest import TestCase
-import mock
+from unittest import mock
 import redislite
 
 

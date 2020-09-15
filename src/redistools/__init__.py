@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 __version__ = "0.0.1"
 
 import json
@@ -9,7 +7,7 @@ from environs import Env
 import redis
 from redis.lock import LockError
 from redis.sentinel import Sentinel, MasterNotFoundError
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 import logging
 
 logger = logging.getLogger()
@@ -34,9 +32,7 @@ class MySentinel(Sentinel):
         if state and self.check_master_state(state, service_name):
             return state['ip'], state['port']
 
-        logger.error("No master found for {}, masters: {}, state: {}".format(
-            service_name, masters, state
-        ))
+        logger.error(f"No master found for {service_name}, masters: {masters}, state: {state}")
 
         raise MasterNotFoundError("No master found for %r" % (service_name,))
 
@@ -150,7 +146,7 @@ def request_is_limited_gcra(key, limit, period, client=None):
     if client is None:
         client = get_redis(True)
     t = client.time()[0]
-    separation = int(round(period / limit))
+    separation = round(period / limit)
     client.setnx(key, 0)
     try:
         with client.lock('lock:' + key, blocking_timeout=5):
@@ -188,9 +184,7 @@ def rate_limit(limit, period, key=None, key_prefix="", algorithm="gcra", client=
             limited = request_is_limited(request_key, limit, period, algorithm, client)
             if limited:
                 raise TooManyRequests(
-                    "Too many requests for {} allowed {}/{}secs".format(
-                        request_key, limit, period
-                    )
+                    f"Too many requests for {request_key} allowed {limit}/{period}secs"
                 )
             else:
                 return f(*args, **kwargs)
