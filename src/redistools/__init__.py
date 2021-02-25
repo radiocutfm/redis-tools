@@ -83,8 +83,8 @@ def get_redis(master=True, reconnect=False, env=None):
             "REDIS_TIMEOUT", 0.2
         )
         sentinel = MySentinel([(host, port)], socket_timeout=REDIS_TIMEOUT)
-        _redis_master = sentinel.master_for(REDIS_MASTER, socket_timeout=REDIS_TIMEOUT)
-        _redis_slave = sentinel.slave_for(REDIS_MASTER, socket_timeout=REDIS_TIMEOUT)
+        _redis_master = sentinel.master_for(REDIS_MASTER, socket_timeout=REDIS_TIMEOUT, db=db)
+        _redis_slave = sentinel.slave_for(REDIS_MASTER, socket_timeout=REDIS_TIMEOUT, db=db)
 
     return _redis_master if master else _redis_slave
 
